@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Routes;
 use App\Models\RoutesData;
 use Carbon\Carbon;
 
@@ -57,6 +58,13 @@ class HandlerQueryService
                 $queryRoute->with('reservations');
             })
             ->get();
+        return $data;
+    }
+
+    public function getAllRoutes()
+    {
+        $routes = Routes::all();
+        $data = array_map(fn ($route) => ['id' => $route['id'], 'title' => $route['title']], $routes->toArray());
         return $data;
     }
 }
