@@ -21,9 +21,9 @@ class HandlerQueryService
             $dateTo = Carbon::createFromFormat('d-m-Y', $dateTo);
             $data = RoutesData::where('calendar_id', $calendar_id)
                 ->whereBetween('created_at', [$dateFrom, $dateTo])
-                ->with('calendar', function ($queryCalendar) use ($dateFrom) {
-                    $queryCalendar->with('daysDisabled', function ($queryD) use ($dateFrom) {
-                        $queryD->whereDate('created_at', $dateFrom)->where('enabled', false);
+                ->with('calendar', function ($queryCalendar) {
+                    $queryCalendar->with('daysDisabled', function ($queryD) {
+                        $queryD->where('enabled', false);
                     });
                 })
                 ->with('route', function ($queryRoute) {
@@ -33,9 +33,9 @@ class HandlerQueryService
         } else {
             $data = RoutesData::where('calendar_id', $calendar_id)
                 ->whereDate('created_at', $dateFrom)
-                ->with('calendar', function ($queryCalendar) use ($dateFrom) {
-                    $queryCalendar->with('daysDisabled', function ($queryD) use ($dateFrom) {
-                        $queryD->whereDate('created_at', $dateFrom)->where('enabled', false);
+                ->with('calendar', function ($queryCalendar) {
+                    $queryCalendar->with('daysDisabled', function ($queryD) {
+                        $queryD->where('enabled', false);
                     });
                 })
                 ->with('route', function ($queryRoute) {
@@ -52,7 +52,9 @@ class HandlerQueryService
         $data = RoutesData::where('calendar_id', $calendar_id)
             ->where('routes_id', $route_id)
             ->with('calendar', function ($queryCalendar) {
-                $queryCalendar->with('daysDisabled');
+                $queryCalendar->with('daysDisabled', function ($queryD) {
+                    $queryD->where('enabled', false);
+                });
             })
             ->with('route', function ($queryRoute) {
                 $queryRoute->with('reservations');
